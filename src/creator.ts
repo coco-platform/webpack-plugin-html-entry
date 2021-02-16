@@ -11,6 +11,7 @@ export function createStylesheet(pathname: string): string {
   return `<link rel="stylesheet" href="${pathname}" />`;
 }
 
-export function createRoot(): string {
+// inject extra html as qiankun container
+export function createExtraHTML(): string {
   return '<div class="root"></div>';
 }

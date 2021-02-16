@@ -7,7 +7,7 @@ import url from 'url';
 import { Compiler, Compilation, sources, WebpackPluginInstance } from 'webpack';
 
 // internal
-import { createRoot, createScript, createStylesheet } from './creator';
+import { createExtraHTML, createScript, createStylesheet } from './creator';
 import { HTMLEntryPluginOptions } from './index.interface';
 
 // scope
@@ -15,6 +15,7 @@ const { RawSource } = sources;
 
 const defaultOptions: HTMLEntryPluginOptions = {
   filename: 'index.html',
+  extraHTML: createExtraHTML,
 };
 
 export class HTMLEntryPlugin implements WebpackPluginInstance {
@@ -76,7 +77,12 @@ export class HTMLEntryPlugin implements WebpackPluginInstance {
                   return undefined;
               }
             })
-            .concat(createRoot())
+            // extra html as qiankun microservice container
+            .concat(
+              typeof this.options.extraHTML === 'string'
+                ? this.options.extraHTML
+                : this.options.extraHTML()
+            )
             .join('\n');
 
           compilation.emitAsset(this.options.filename, new RawSource(source));

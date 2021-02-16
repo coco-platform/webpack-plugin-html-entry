@@ -4,3 +4,8 @@ exports[`plugin test suits should complete standard workflow 1`] = `
 "<script src=\\"/main.js\\"></script>
 <div class=\\"root\\"></div>"
 `;
+
+exports[`plugin test suits should support customize extra html 1`] = `
+"<script src=\\"/main.js\\"></script>
+<section class=\\"ms-container\\"></section>"
+`;
