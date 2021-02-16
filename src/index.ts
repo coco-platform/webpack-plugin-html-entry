@@ -6,29 +6,42 @@
 import url from 'url';
 import { Compiler, Compilation, sources, WebpackPluginInstance } from 'webpack';
 
+// internal
+import { createRoot, createScript, createStylesheet } from './creator';
+import { HTMLEntryPluginOptions } from './index.interface';
+
 // scope
 const { RawSource } = sources;
 
-const createScript = (pathname: string) =>
-  `<script src="${pathname}"></script>`;
-const createStylesheet = (pathname: string) =>
-  `<link rel="stylesheet" href="${pathname}" />`;
-const createRoot = () => '<div class="root"></div>';
+const defaultOptions: HTMLEntryPluginOptions = {
+  filename: 'index.html',
+};
 
 export class HTMLEntryPlugin implements WebpackPluginInstance {
+  // padding optional property with default options
+  private readonly options: Required<HTMLEntryPluginOptions>;
+
+  constructor(options: HTMLEntryPluginOptions = {}) {
+    this.options = { ...defaultOptions, ...options } as Required<
+      HTMLEntryPluginOptions
+    >;
+  }
+
   apply(compiler: Compiler): void {
     compiler.hooks.compilation.tap('HTMLEntry', (compilation) => {
-      compilation.hooks.processAdditionalAssets.tap(
+      compilation.hooks.processAssets.tap(
         {
           name: 'HTMLEntry',
-          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
+          stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
         },
         () => {
           const entrypoint = compilation.entrypoints.get('main');
 
           if (!entrypoint) {
-            // eslint-disable-next-line quotes
-            throw new Error(`HTMLEntryPlugin can't recognize entrypoints`);
+            throw new Error(
+              // eslint-disable-next-line quotes
+              `HTMLEntryPlugin can't recognize entrypoints, only support single 'main' entrypoint`
+            );
           }
 
           // runtime chunk first
@@ -66,7 +79,7 @@ export class HTMLEntryPlugin implements WebpackPluginInstance {
             .concat(createRoot())
             .join('\n');
 
-          compilation.emitAsset('index.html', new RawSource(source));
+          compilation.emitAsset(this.options.filename, new RawSource(source));
         }
       );
     });
