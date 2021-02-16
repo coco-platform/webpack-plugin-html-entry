@@ -27,3 +27,11 @@ rules:
   semi:
     - error
     - always
+# support minority javascript
+overrides:
+  - files:
+      - '*.js'
+    parser: 'espress'
+    extends:
+      - 'eslint:recommended'
+      - 'prettier'
