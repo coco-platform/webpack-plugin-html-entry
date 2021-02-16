@@ -1,0 +1,6 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plugin test suits should complete standard workflow 1`] = `
+"<script src=\\"/main.js\\"></script>
+<div class=\\"root\\"></div>"
+`;
